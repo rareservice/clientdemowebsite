@@ -1,0 +1,2180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Sign in — Rare.0g Demo Website</title>
+  <meta name="description" content="Rare.0g Demo Website — Modern, secure authentication and investment portal." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+  <style>
+    :root {
+      --bg-dark: #07090e;
+      --bg-card: rgba(16, 22, 34, 0.82);
+      --bg-card-solid: #101622;
+      --bg-input: rgba(22, 30, 46, 0.7);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-focus: #10b981;
+      --primary: #10b981;
+      --primary-hover: #059669;
+      --primary-glow: rgba(16, 185, 129, 0.25);
+      --accent-cyan: #06b6d4;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --success: #10b981;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Ambient Background Elements */
+    .ambient-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .ambient-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.28;
+      animation: floatOrb 18s ease-in-out infinite alternate;
+    }
+
+    .orb-1 {
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, #10b981 0%, rgba(16, 185, 129, 0) 70%);
+      top: -100px;
+      left: -100px;
+    }
+
+    .orb-2 {
+      width: 520px;
+      height: 520px;
+      background: radial-gradient(circle, #06b6d4 0%, rgba(6, 182, 212, 0) 70%);
+      bottom: -120px;
+      right: -80px;
+      animation-delay: -6s;
+    }
+
+    .orb-3 {
+      width: 360px;
+      height: 360px;
+      background: radial-gradient(circle, #6366f1 0%, rgba(99, 102, 241, 0) 70%);
+      top: 40%;
+      left: 55%;
+      opacity: 0.15;
+      animation-delay: -11s;
+    }
+
+    .bg-grid {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(circle at center, black 35%, transparent 85%);
+      -webkit-mask-image: radial-gradient(circle at center, black 35%, transparent 85%);
+    }
+
+    @keyframes floatOrb {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(40px, 60px) scale(1.08); }
+      100% { transform: translate(-30px, 30px) scale(0.95); }
+    }
+
+    /* Container */
+    .app-wrapper {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    /* Top Navigation Bar */
+    .top-header {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .brand-logo-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 18px var(--primary-glow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-logo-badge::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      animation: shine 4s infinite;
+    }
+
+    @keyframes shine {
+      0% { left: -100%; }
+      20%, 100% { left: 150%; }
+    }
+
+    .brand-meta {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .brand-tag {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 0.15rem 0.45rem;
+      border-radius: 999px;
+    }
+
+    .brand-subtitle {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* Support Button */
+    .support-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.55rem 1.05rem;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .support-btn:hover {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      position: relative;
+    }
+
+    .pulse-dot::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      opacity: 0.7;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 0.8; }
+      100% { transform: scale(2.4); opacity: 0; }
+    }
+
+    /* Main Content Area */
+    .main-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem 1rem 3rem 1rem;
+    }
+
+    /* Auth Card */
+    .auth-card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 2.25rem 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(24px);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .auth-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, var(--primary) 50%, var(--accent-cyan) 80%, transparent 100%);
+    }
+
+    /* Segmented Navigation Tabs */
+    .tabs-container {
+      display: flex;
+      background: rgba(10, 14, 23, 0.6);
+      border: 1px solid var(--border-color);
+      padding: 0.3rem;
+      border-radius: var(--radius-md);
+      margin-bottom: 1.75rem;
+      position: relative;
+    }
+
+    .tab-item {
+      flex: 1;
+      text-align: center;
+      padding: 0.75rem 0.5rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+      z-index: 1;
+      user-select: none;
+    }
+
+    .tab-item:hover {
+      color: var(--text-main);
+    }
+
+    .tab-item.active {
+      color: #ffffff;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(6, 182, 212, 0.2) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Auth Headers */
+    .card-header-area {
+      text-align: left;
+      margin-bottom: 1.5rem;
+    }
+
+    .auth-heading {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.35rem;
+    }
+
+    .auth-subheading {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Form Fields */
+    .form-group {
+      margin-bottom: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .form-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .label-hint {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      font-weight: 400;
+    }
+
+    /* Phone Input Box with Country Code */
+    .phone-input-wrapper {
+      display: flex;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .phone-input-wrapper:focus-within {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    .country-selector {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0 0.85rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-right: 1px solid var(--border-color);
+      cursor: pointer;
+      user-select: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-main);
+      border-top-left-radius: var(--radius-md);
+      border-bottom-left-radius: var(--radius-md);
+      transition: background 0.2s;
+    }
+
+    .country-selector:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .country-flag {
+      font-size: 1.1rem;
+    }
+
+    .country-dropdown-arrow {
+      width: 12px;
+      height: 12px;
+      opacity: 0.6;
+    }
+
+    .phone-input-field {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      padding: 0.85rem 1rem;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      letter-spacing: 0.03em;
+      font-family: inherit;
+    }
+
+    .phone-input-field::placeholder {
+      color: var(--text-dim);
+    }
+
+    /* General Input Field */
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .text-input-field {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1rem;
+      padding-right: 2.8rem;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .text-input-field:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    .text-input-field::placeholder {
+      color: var(--text-dim);
+    }
+
+    .toggle-visibility-btn {
+      position: absolute;
+      right: 0.85rem;
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.3rem;
+      border-radius: 4px;
+      transition: color 0.2s;
+    }
+
+    .toggle-visibility-btn:hover {
+      color: var(--text-main);
+    }
+
+    /* Referral Code Badge */
+    .invitation-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.72rem;
+      color: var(--accent-cyan);
+      background: rgba(6, 182, 212, 0.12);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      margin-top: 0.35rem;
+      width: fit-content;
+    }
+
+    /* Form Options Row (Remember me & Forgot Password) */
+    .form-options-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.4rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.84rem;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checkbox-custom {
+      width: 17px;
+      height: 17px;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-input);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .checkbox-label input:checked + .checkbox-custom {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .checkbox-label input {
+      display: none;
+    }
+
+    .forgot-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .forgot-link:hover {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    /* Password Strength Indicator */
+    .password-strength-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      margin-top: 0.35rem;
+    }
+
+    .strength-bars {
+      display: flex;
+      gap: 4px;
+      height: 4px;
+    }
+
+    .strength-bar {
+      flex: 1;
+      height: 100%;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.1);
+      transition: background 0.3s;
+    }
+
+    .strength-text {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Primary Action Button */
+    .btn-submit {
+      width: 100%;
+      padding: 0.95rem 1.5rem;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 4px 18px var(--primary-glow);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      position: relative;
+    }
+
+    .btn-submit:hover {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px var(--primary-glow);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    .btn-submit.loading {
+      pointer-events: none;
+      opacity: 0.85;
+    }
+
+    .btn-spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+
+    .btn-submit.loading .btn-spinner {
+      display: block;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Demo Quick Autofill Helper */
+    .quick-autofill-box {
+      margin-top: 1.25rem;
+      padding: 0.75rem 0.9rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+    }
+
+    .autofill-info {
+      color: var(--text-muted);
+    }
+
+    .autofill-btn {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--primary);
+      padding: 0.3rem 0.65rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.76rem;
+      transition: all 0.2s;
+    }
+
+    .autofill-btn:hover {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    /* Bottom Security Badge */
+    .security-badge-footer {
+      margin-top: 1.75rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      text-align: center;
+    }
+
+    .security-shield-icon {
+      width: 16px;
+      height: 16px;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    /* Country Selector Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(10px);
+      z-index: 999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-card {
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      width: 100%;
+      max-width: 420px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+      animation: modalSlide 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalSlide {
+      from { transform: translateY(20px) scale(0.97); }
+      to { transform: translateY(0) scale(1); }
+    }
+
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .modal-close-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: none;
+      color: var(--text-muted);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .modal-close-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+    }
+
+    .modal-search-box {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-search-input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      color: var(--text-main);
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .modal-list-body {
+      overflow-y: auto;
+      padding: 0.5rem 0;
+      max-height: 360px;
+    }
+
+    .country-list-item {
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .country-list-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .country-item-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .country-item-name {
+      font-size: 0.92rem;
+      font-weight: 500;
+    }
+
+    .country-item-code {
+      color: var(--primary);
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    /* Support Modal Content */
+    .support-options-grid {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .support-card-btn {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: var(--text-main);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .support-card-btn:hover {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: rgba(16, 185, 129, 0.3);
+      transform: translateX(4px);
+    }
+
+    .support-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+
+    .sup-tg { background: rgba(0, 136, 204, 0.15); color: #0088cc; }
+    .sup-wa { background: rgba(37, 211, 102, 0.15); color: #25d366; }
+    .sup-live { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+
+    .support-info-text h4 {
+      font-size: 0.95rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .support-info-text p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================
+       FULL DEMO DASHBOARD (Post-Authentication Showcase View)
+       ========================================================== */
+    .dashboard-view {
+      display: none;
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 4rem 1rem;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dash-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius-xl);
+      backdrop-filter: blur(16px);
+      margin-bottom: 1.5rem;
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .user-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent-cyan) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #ffffff;
+      font-size: 1.1rem;
+    }
+
+    .user-details h3 {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .user-tagline {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .vip-tag {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      padding: 0.1rem 0.45rem;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.7rem;
+    }
+
+    .dash-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-logout {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+      padding: 0.55rem 1rem;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-logout:hover {
+      background: var(--danger);
+      color: #ffffff;
+    }
+
+    /* Balance Hero Banner */
+    .balance-card {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(6, 182, 212, 0.1) 50%, rgba(16, 22, 34, 0.95) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: var(--radius-xl);
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+    }
+
+    .balance-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+    }
+
+    .balance-label {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .balance-amount {
+      font-size: 2.3rem;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+    }
+
+    .balance-usd {
+      font-size: 0.95rem;
+      color: var(--accent-cyan);
+      font-weight: 600;
+      margin-top: 0.25rem;
+    }
+
+    .action-btn-row {
+      display: flex;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    .action-btn-primary {
+      flex: 1;
+      min-width: 140px;
+      padding: 0.85rem 1.25rem;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+
+    .action-btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+
+    .action-btn-secondary {
+      flex: 1;
+      min-width: 140px;
+      padding: 0.85rem 1.25rem;
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+
+    .action-btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 1.25rem;
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(12px);
+    }
+
+    .stat-title {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .stat-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .stat-badge {
+      display: inline-block;
+      font-size: 0.74rem;
+      color: var(--primary);
+      margin-top: 0.35rem;
+      font-weight: 600;
+    }
+
+    /* Tasks / Feature Section */
+    .dashboard-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .tasks-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .task-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      transition: background 0.2s;
+    }
+
+    .task-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .task-info h4 {
+      font-size: 0.92rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .task-info p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .task-reward {
+      color: #34d399;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .btn-claim-task {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: var(--primary);
+      padding: 0.45rem 0.95rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-claim-task:hover {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-claim-task.claimed {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: transparent;
+      color: var(--text-dim);
+      cursor: default;
+    }
+
+    /* Referral Box */
+    .referral-box {
+      background: linear-gradient(90deg, rgba(6, 182, 212, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+      border: 1px dashed rgba(6, 182, 212, 0.35);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .ref-code-display {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-family: monospace;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--accent-cyan);
+      letter-spacing: 0.1em;
+    }
+
+    .btn-copy-ref {
+      background: var(--accent-cyan);
+      color: #000000;
+      border: none;
+      padding: 0.55rem 1.15rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-copy-ref:hover {
+      opacity: 0.9;
+      transform: scale(1.03);
+    }
+
+    /* Toast Notification System */
+    .toast-container {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      pointer-events: none;
+    }
+
+    .toast-item {
+      pointer-events: auto;
+      background: #1e293b;
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-left: 4px solid var(--primary);
+      padding: 0.9rem 1.25rem;
+      border-radius: var(--radius-md);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      min-width: 280px;
+      animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.25s ease;
+    }
+
+    @keyframes toastIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .toast-item.hide {
+      opacity: 0;
+      transform: translateX(50%);
+    }
+
+    .toast-item.error {
+      border-left-color: var(--danger);
+    }
+
+    .toast-item.info {
+      border-left-color: var(--accent-cyan);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 520px) {
+      .auth-card {
+        padding: 1.75rem 1.25rem;
+        border-radius: var(--radius-lg);
+      }
+      .top-header {
+        padding: 1rem 1rem;
+      }
+      .brand-title {
+        font-size: 1rem;
+      }
+      .balance-amount {
+        font-size: 1.85rem;
+      }
+      .action-btn-row {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Light Effects -->
+  <div class="ambient-bg">
+    <div class="bg-grid"></div>
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+  </div>
+
+  <div class="app-wrapper">
+
+    <!-- Top Navigation Header -->
+    <header class="top-header">
+      <div class="brand-group" onclick="showAuthView()">
+        <div class="brand-logo-badge">R</div>
+        <div class="brand-meta">
+          <div class="brand-title">
+            Rare.0g Demo Website
+            <span class="brand-tag">DEMO</span>
+          </div>
+          <span class="brand-subtitle">Smart Financial & Earning Ecosystem</span>
+        </div>
+      </div>
+
+      <button class="support-btn" onclick="openSupportModal()">
+        <span class="pulse-dot"></span>
+        <span>Rare.0g Support</span>
+      </button>
+    </header>
+
+    <!-- MAIN VIEW CONTAINER -->
+    <main class="main-content" id="mainContainer">
+
+      <!-- ==============================================
+           AUTH CARD (Exact replica matching sample flow)
+           ============================================== -->
+      <div class="auth-card" id="authCard">
+        
+        <!-- Segmented Tab Navigation -->
+        <div class="tabs-container">
+          <div class="tab-item active" id="tabSignIn" onclick="switchAuthTab('signin')">Sign in</div>
+          <div class="tab-item" id="tabRegister" onclick="switchAuthTab('register')">Register</div>
+        </div>
+
+        <!-- ================= SIGN IN TAB ================= -->
+        <div id="signInSection">
+          <div class="card-header-area">
+            <h1 class="auth-heading">Sign in</h1>
+            <p class="auth-subheading">Access your Rare.0g account with your phone number and password.</p>
+          </div>
+
+          <form id="signInForm" onsubmit="handleSignInSubmit(event)">
+            <!-- Phone Number Field -->
+            <div class="form-group">
+              <label class="form-label">
+                <span>Phone Number</span>
+                <span class="label-hint">Required</span>
+              </label>
+              <div class="phone-input-wrapper">
+                <div class="country-selector" onclick="openCountryModal('signin')">
+                  <span class="country-flag" id="selectedFlagSignIn">🇵🇰</span>
+                  <span id="selectedDialCodeSignIn">+92</span>
+                  <svg class="country-dropdown-arrow" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <input 
+                  type="tel" 
+                  id="signInPhone" 
+                  class="phone-input-field" 
+                  placeholder="300 1234567" 
+                  required 
+                  autocomplete="username"
+                />
+              </div>
+            </div>
+
+            <!-- Password Field -->
+            <div class="form-group">
+              <label class="form-label" for="signInPassword">
+                <span>Password</span>
+              </label>
+              <div class="input-wrapper">
+                <input 
+                  type="password" 
+                  id="signInPassword" 
+                  class="text-input-field" 
+                  placeholder="Enter your account password" 
+                  required 
+                  autocomplete="current-password"
+                />
+                <button type="button" class="toggle-visibility-btn" onclick="togglePasswordVisibility('signInPassword', this)" title="Show/Hide Password">
+                  <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Options Row (Remember me + Forgot Password) -->
+            <div class="form-options-row">
+              <label class="checkbox-label">
+                <input type="checkbox" id="rememberMe" checked />
+                <span class="checkbox-custom">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </span>
+                <span>Remember me</span>
+              </label>
+
+              <span class="forgot-link" onclick="openForgotPasswordModal()">Forgot password?</span>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn-submit" id="signInSubmitBtn">
+              <span class="btn-spinner"></span>
+              <span class="btn-label">Sign in</span>
+            </button>
+          </form>
+
+          <!-- Quick Autofill Demo Credentials -->
+          <div class="quick-autofill-box">
+            <div class="autofill-info">
+              💡 <strong>Demo Mode:</strong> Click to fill sample account
+            </div>
+            <button type="button" class="autofill-btn" onclick="autofillDemoCredentials()">
+              Autofill
+            </button>
+          </div>
+        </div>
+
+        <!-- ================= REGISTER TAB ================= -->
+        <div id="registerSection" style="display: none;">
+          <div class="card-header-area">
+            <h1 class="auth-heading">Register</h1>
+            <p class="auth-subheading">Join Rare.0g Demo Website to unlock daily yield and trading perks.</p>
+          </div>
+
+          <form id="registerForm" onsubmit="handleRegisterSubmit(event)">
+            <!-- Phone Number Field -->
+            <div class="form-group">
+              <label class="form-label">
+                <span>Phone Number</span>
+                <span class="label-hint">Account ID</span>
+              </label>
+              <div class="phone-input-wrapper">
+                <div class="country-selector" onclick="openCountryModal('register')">
+                  <span class="country-flag" id="selectedFlagRegister">🇵🇰</span>
+                  <span id="selectedDialCodeRegister">+92</span>
+                  <svg class="country-dropdown-arrow" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <input 
+                  type="tel" 
+                  id="regPhone" 
+                  class="phone-input-field" 
+                  placeholder="300 1234567" 
+                  required 
+                />
+              </div>
+            </div>
+
+            <!-- Set Password -->
+            <div class="form-group">
+              <label class="form-label" for="regPassword">
+                <span>Set Password</span>
+              </label>
+              <div class="input-wrapper">
+                <input 
+                  type="password" 
+                  id="regPassword" 
+                  class="text-input-field" 
+                  placeholder="At least 6 characters" 
+                  required 
+                  oninput="checkPasswordStrength(this.value)"
+                />
+                <button type="button" class="toggle-visibility-btn" onclick="togglePasswordVisibility('regPassword', this)">
+                  <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                  </svg>
+                </button>
+              </div>
+              <div class="password-strength-container">
+                <div class="strength-bars">
+                  <div class="strength-bar" id="bar1"></div>
+                  <div class="strength-bar" id="bar2"></div>
+                  <div class="strength-bar" id="bar3"></div>
+                </div>
+                <div class="strength-text">
+                  <span id="strengthLabel">Strength: Enter password</span>
+                  <span style="color:var(--text-dim);">Min. 6 chars</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="form-group">
+              <label class="form-label" for="regConfirmPassword">
+                <span>Confirm Password</span>
+              </label>
+              <div class="input-wrapper">
+                <input 
+                  type="password" 
+                  id="regConfirmPassword" 
+                  class="text-input-field" 
+                  placeholder="Repeat your password" 
+                  required 
+                />
+                <button type="button" class="toggle-visibility-btn" onclick="togglePasswordVisibility('regConfirmPassword', this)">
+                  <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Invitation Code -->
+            <div class="form-group">
+              <label class="form-label" for="regInviteCode">
+                <span>Invitation Code</span>
+                <span class="label-hint">Optional</span>
+              </label>
+              <input 
+                type="text" 
+                id="regInviteCode" 
+                class="text-input-field" 
+                value="RARE777" 
+                placeholder="Enter referral code" 
+              />
+              <div class="invitation-badge">
+                <span>✓ Invited by: Rare.0g Founding Member</span>
+              </div>
+            </div>
+
+            <!-- Agree to Terms -->
+            <div class="form-options-row" style="margin-bottom: 1.25rem;">
+              <label class="checkbox-label">
+                <input type="checkbox" id="agreeTerms" checked required />
+                <span class="checkbox-custom">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </span>
+                <span style="font-size: 0.8rem;">I agree to User Agreement & Privacy Policy</span>
+              </label>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn-submit" id="registerSubmitBtn">
+              <span class="btn-spinner"></span>
+              <span class="btn-label">Create Account</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Security Bottom Note (Exact 1:1 match with sample) -->
+        <div class="security-badge-footer">
+          <svg class="security-shield-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+          </svg>
+          <span>Secure authentication. Your phone is your account ID.</span>
+        </div>
+
+      </div>
+
+      <!-- ==============================================
+           INTERACTIVE DEMO DASHBOARD (Post-Login View)
+           ============================================== -->
+      <div class="dashboard-view" id="dashboardView">
+        
+        <!-- Dashboard Top Bar -->
+        <div class="dash-topbar">
+          <div class="user-pill">
+            <div class="user-avatar" id="dashAvatar">R</div>
+            <div class="user-details">
+              <h3 id="dashUserPhone">+92 300 1234567</h3>
+              <div class="user-tagline">
+                <span>Account ID</span>
+                <span class="vip-tag">VIP 2 Tier</span>
+                <span style="color:var(--primary);">● Active</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="dash-actions">
+            <button class="support-btn" onclick="openSupportModal()">
+              <span>Help</span>
+            </button>
+            <button class="btn-logout" onclick="handleLogout()">
+              Log out
+            </button>
+          </div>
+        </div>
+
+        <!-- Balance Card -->
+        <div class="balance-card">
+          <div class="balance-meta">
+            <div>
+              <div class="balance-label">Total Estimated Balance</div>
+              <div class="balance-amount" id="dashBalanceAmount">PKR 148,500.00</div>
+              <div class="balance-usd">≈ $530.35 USD (USDT-TRC20)</div>
+            </div>
+            <span class="brand-tag" style="background:rgba(255,255,255,0.1); color:#fff; border-color:rgba(255,255,255,0.2);">
+              +18.4% this week
+            </span>
+          </div>
+
+          <div class="action-btn-row">
+            <button class="action-btn-primary" onclick="showToast('Deposit address generated: TRC20 0x7a89...4bf', 'info')">
+              <span>💳 Deposit Funds</span>
+            </button>
+            <button class="action-btn-secondary" onclick="showToast('Withdrawal window open 24/7. Minimum: PKR 1,000', 'info')">
+              <span>💸 Withdraw</span>
+            </button>
+            <button class="action-btn-secondary" onclick="showToast('Daily check-in completed! +PKR 250 credited', 'success')">
+              <span>🎁 Daily Bonus</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-title">Today's Commission</div>
+            <div class="stat-value" style="color:var(--primary);">PKR 3,420.00</div>
+            <div class="stat-badge">↑ +12.8% vs yesterday</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">Cumulative Earnings</div>
+            <div class="stat-value">PKR 54,200.00</div>
+            <div class="stat-badge" style="color:var(--accent-cyan);">14 days active</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">Team Size / Referrals</div>
+            <div class="stat-value">28 Members</div>
+            <div class="stat-badge" style="color:#f59e0b;">Level 1 & 2 Rebates</div>
+          </div>
+        </div>
+
+        <!-- Daily Tasks Section -->
+        <div class="dashboard-section">
+          <div class="section-header">
+            <h3 class="section-title">Today's Yield Tasks</h3>
+            <span style="font-size:0.8rem; color:var(--text-muted);">Reset in 08:34:12</span>
+          </div>
+
+          <div class="tasks-list">
+            <div class="task-item">
+              <div class="task-info">
+                <h4>Quantum Compute Liquidity Order #104</h4>
+                <p>Verify network hash rate allocation on node cluster</p>
+              </div>
+              <div style="display:flex; align-items:center; gap:1rem;">
+                <span class="task-reward">+PKR 850</span>
+                <button class="btn-claim-task" onclick="claimTask(this, 850)">Execute</button>
+              </div>
+            </div>
+
+            <div class="task-item">
+              <div class="task-info">
+                <h4>Arbitrage Swap Execution #209</h4>
+                <p>Liquidity verification on TRON USDT pool</p>
+              </div>
+              <div style="display:flex; align-items:center; gap:1rem;">
+                <span class="task-reward">+PKR 1,200</span>
+                <button class="btn-claim-task" onclick="claimTask(this, 1200)">Execute</button>
+              </div>
+            </div>
+
+            <div class="task-item">
+              <div class="task-info">
+                <h4>VIP Community Discussion Participation</h4>
+                <p>Check pinned announcements in official Telegram channel</p>
+              </div>
+              <div style="display:flex; align-items:center; gap:1rem;">
+                <span class="task-reward">+PKR 500</span>
+                <button class="btn-claim-task claimed">Completed ✓</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Referral Link Showcase -->
+        <div class="dashboard-section">
+          <div class="section-header">
+            <h3 class="section-title">Your Exclusive Referral Link</h3>
+            <span style="font-size:0.8rem; color:var(--primary);">Earn 15% 1st-Tier Rebate</span>
+          </div>
+          
+          <div class="referral-box">
+            <div>
+              <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.35rem;">
+                Share your link to grow your commission tier:
+              </div>
+              <div class="ref-code-display" id="refLinkText">
+                https://rare0g.demo/auth?ref=RARE777
+              </div>
+            </div>
+            <button class="btn-copy-ref" onclick="copyReferralLink()">
+              📋 Copy Link
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer style="text-align:center; padding:1.5rem; font-size:0.75rem; color:var(--text-dim); border-top:1px solid rgba(255,255,255,0.04);">
+      <p>© 2026 Rare.0g Demo Website. All rights reserved. Demo presentation interface.</p>
+    </footer>
+
+  </div>
+
+  <!-- ==============================================
+       COUNTRY CODE SELECTION MODAL
+       ============================================== -->
+  <div class="modal-overlay" id="countryModal" onclick="handleBackdropClick(event, 'countryModal')">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Select Country / Region</h3>
+        <button class="modal-close-btn" onclick="closeCountryModal()">✕</button>
+      </div>
+
+      <div class="modal-search-box">
+        <input 
+          type="text" 
+          id="countrySearchInput" 
+          class="modal-search-input" 
+          placeholder="Search country or code (e.g., Pakistan, +92)"
+          oninput="filterCountries(this.value)"
+        />
+      </div>
+
+      <div class="modal-list-body" id="countryList">
+        <!-- Filled dynamically by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================
+       FORGOT PASSWORD MODAL
+       ============================================== -->
+  <div class="modal-overlay" id="forgotModal" onclick="handleBackdropClick(event, 'forgotModal')">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Reset Password</h3>
+        <button class="modal-close-btn" onclick="closeForgotModal()">✕</button>
+      </div>
+
+      <div style="padding:1.5rem;">
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.25rem;">
+          Enter your registered phone number. We will send a 6-digit verification code to reset your login credentials.
+        </p>
+
+        <form onsubmit="handleForgotSubmit(event)">
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <div class="phone-input-wrapper">
+              <div class="country-selector">
+                <span class="country-flag">🇵🇰</span>
+                <span>+92</span>
+              </div>
+              <input type="tel" id="forgotPhone" class="phone-input-field" placeholder="300 1234567" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">SMS Verification Code</label>
+            <div style="display:flex; gap:0.5rem;">
+              <input type="text" id="forgotOtp" class="text-input-field" placeholder="6-digit OTP" required />
+              <button type="button" class="autofill-btn" id="sendOtpBtn" style="white-space:nowrap; padding:0 1rem;" onclick="sendDummyOtp()">
+                Send OTP
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">New Password</label>
+            <input type="password" id="forgotNewPassword" class="text-input-field" placeholder="New secure password" required />
+          </div>
+
+          <button type="submit" class="btn-submit" style="margin-top:1rem;">
+            <span>Reset Password</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================
+       SUPPORT MODAL
+       ============================================== -->
+  <div class="modal-overlay" id="supportModal" onclick="handleBackdropClick(event, 'supportModal')">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Rare.0g Support Center</h3>
+        <button class="modal-close-btn" onclick="closeSupportModal()">✕</button>
+      </div>
+
+      <div class="support-options-grid">
+        <div class="support-card-btn" onclick="showToast('Connecting to Telegram support bot @Rare0g_Support...', 'info')">
+          <div class="support-icon-wrap sup-tg">✈️</div>
+          <div class="support-info-text">
+            <h4>Telegram Official Support</h4>
+            <p>Fastest response · Available 24/7</p>
+          </div>
+        </div>
+
+        <div class="support-card-btn" onclick="showToast('Opening WhatsApp Helpdesk...', 'info')">
+          <div class="support-icon-wrap sup-wa">💬</div>
+          <div class="support-info-text">
+            <h4>WhatsApp Customer Desk</h4>
+            <p>Direct chat with customer representative</p>
+          </div>
+        </div>
+
+        <div class="support-card-btn" onclick="showToast('Live Agent Connected. How can we assist you today?', 'success')">
+          <div class="support-icon-wrap sup-live">🎧</div>
+          <div class="support-info-text">
+            <h4>Instant Online Live Chat</h4>
+            <p>In-app instant resolution service</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- JAVASCRIPT APPLICATION LOGIC -->
+  <script>
+    // State management
+    const state = {
+      activeTab: 'signin',
+      currentContext: 'signin',
+      selectedCountry: { code: '+92', flag: '🇵🇰', name: 'Pakistan' },
+      balance: 148500,
+      currentUser: null,
+      otpCooldown: 0
+    };
+
+    // Country Database
+    const countries = [
+      { name: 'Pakistan', code: '+92', flag: '🇵🇰' },
+      { name: 'United States', code: '+1', flag: '🇺🇸' },
+      { name: 'United Kingdom', code: '+44', flag: '🇬🇧' },
+      { name: 'United Arab Emirates', code: '+971', flag: '🇦🇪' },
+      { name: 'Saudi Arabia', code: '+966', flag: '🇸🇦' },
+      { name: 'Canada', code: '+1', flag: '🇨🇦' },
+      { name: 'India', code: '+91', flag: '🇮🇳' },
+      { name: 'Bangladesh', code: '+880', flag: '🇧🇩' },
+      { name: 'Germany', code: '+49', flag: '🇩🇪' },
+      { name: 'Turkey', code: '+90', flag: '🇹🇷' },
+      { name: 'Malaysia', code: '+60', flag: '🇲🇾' },
+      { name: 'Australia', code: '+61', flag: '🇦🇺' },
+      { name: 'Singapore', code: '+65', flag: '🇸🇬' },
+      { name: 'South Africa', code: '+27', flag: '🇿🇦' },
+      { name: 'Nigeria', code: '+234', flag: '🇳🇬' },
+      { name: 'Kuwait', code: '+965', flag: '🇰🇼' },
+      { name: 'Qatar', code: '+974', flag: '🇶🇦' },
+      { name: 'Oman', code: '+968', flag: '🇴🇲' },
+      { name: 'China', code: '+86', flag: '🇨🇳' }
+    ];
+
+    // Initialize country list
+    function renderCountryList(filterText = '') {
+      const listEl = document.getElementById('countryList');
+      listEl.innerHTML = '';
+
+      const filtered = countries.filter(c => 
+        c.name.toLowerCase().includes(filterText.toLowerCase()) || 
+        c.code.includes(filterText)
+      );
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = '<div style="padding:1.5rem; text-align:center; color:var(--text-dim);">No country found</div>';
+        return;
+      }
+
+      filtered.forEach(c => {
+        const item = document.createElement('div');
+        item.className = 'country-list-item';
+        item.innerHTML = `
+          <div class="country-item-left">
+            <span class="country-flag">${c.flag}</span>
+            <span class="country-item-name">${c.name}</span>
+          </div>
+          <span class="country-item-code">${c.code}</span>
+        `;
+        item.onclick = () => selectCountry(c);
+        listEl.appendChild(item);
+      });
+    }
+
+    function switchAuthTab(tab) {
+      state.activeTab = tab;
+      const tabSignIn = document.getElementById('tabSignIn');
+      const tabRegister = document.getElementById('tabRegister');
+      const signInSection = document.getElementById('signInSection');
+      const registerSection = document.getElementById('registerSection');
+
+      if (tab === 'signin') {
+        tabSignIn.classList.add('active');
+        tabRegister.classList.remove('active');
+        signInSection.style.display = 'block';
+        registerSection.style.display = 'none';
+        document.title = "Sign in — Rare.0g Demo Website";
+      } else {
+        tabRegister.classList.add('active');
+        tabSignIn.classList.remove('active');
+        signInSection.style.display = 'none';
+        registerSection.style.display = 'block';
+        document.title = "Register — Rare.0g Demo Website";
+      }
+    }
+
+    function togglePasswordVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+
+      const isPassword = input.type === 'password';
+      input.type = isPassword ? 'text' : 'password';
+
+      if (isPassword) {
+        btn.innerHTML = `
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path>
+          </svg>
+        `;
+      } else {
+        btn.innerHTML = `
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+          </svg>
+        `;
+      }
+    }
+
+    function checkPasswordStrength(val) {
+      const bar1 = document.getElementById('bar1');
+      const bar2 = document.getElementById('bar2');
+      const bar3 = document.getElementById('bar3');
+      const label = document.getElementById('strengthLabel');
+
+      bar1.style.background = 'rgba(255,255,255,0.1)';
+      bar2.style.background = 'rgba(255,255,255,0.1)';
+      bar3.style.background = 'rgba(255,255,255,0.1)';
+
+      if (!val) {
+        label.textContent = "Strength: Enter password";
+        label.style.color = "var(--text-dim)";
+        return;
+      }
+
+      if (val.length < 6) {
+        bar1.style.background = "var(--danger)";
+        label.textContent = "Strength: Too short";
+        label.style.color = "var(--danger)";
+      } else if (val.length < 9) {
+        bar1.style.background = "var(--warning)";
+        bar2.style.background = "var(--warning)";
+        label.textContent = "Strength: Medium";
+        label.style.color = "var(--warning)";
+      } else {
+        bar1.style.background = "var(--success)";
+        bar2.style.background = "var(--success)";
+        bar3.style.background = "var(--success)";
+        label.textContent = "Strength: Strong";
+        label.style.color = "var(--success)";
+      }
+    }
+
+    // Modal Handlers
+    function openCountryModal(context) {
+      state.currentContext = context;
+      renderCountryList();
+      const modal = document.getElementById('countryModal');
+      modal.classList.add('active');
+      document.getElementById('countrySearchInput').value = '';
+      setTimeout(() => document.getElementById('countrySearchInput').focus(), 100);
+    }
+
+    function closeCountryModal() {
+      document.getElementById('countryModal').classList.remove('active');
+    }
+
+    function selectCountry(country) {
+      state.selectedCountry = country;
+      if (state.currentContext === 'signin') {
+        document.getElementById('selectedFlagSignIn').textContent = country.flag;
+        document.getElementById('selectedDialCodeSignIn').textContent = country.code;
+      } else {
+        document.getElementById('selectedFlagRegister').textContent = country.flag;
+        document.getElementById('selectedDialCodeRegister').textContent = country.code;
+      }
+      closeCountryModal();
+      showToast(`Selected region: ${country.name} (${country.code})`, 'info');
+    }
+
+    function filterCountries(txt) {
+      renderCountryList(txt);
+    }
+
+    function openSupportModal() {
+      document.getElementById('supportModal').classList.add('active');
+    }
+
+    function closeSupportModal() {
+      document.getElementById('supportModal').classList.remove('active');
+    }
+
+    function openForgotPasswordModal() {
+      document.getElementById('forgotModal').classList.add('active');
+    }
+
+    function closeForgotModal() {
+      document.getElementById('forgotModal').classList.remove('active');
+    }
+
+    function handleBackdropClick(e, modalId) {
+      if (e.target.id === modalId) {
+        document.getElementById(modalId).classList.remove('active');
+      }
+    }
+
+    // Demo Autofill Helper
+    function autofillDemoCredentials() {
+      document.getElementById('signInPhone').value = "3001234567";
+      document.getElementById('signInPassword').value = "Rare0gPass@2026";
+      showToast("Demo credentials loaded! Click 'Sign in' to view dashboard.", "success");
+    }
+
+    // Form Submissions
+    function handleSignInSubmit(e) {
+      e.preventDefault();
+      const phone = document.getElementById('signInPhone').value.trim();
+      const password = document.getElementById('signInPassword').value.trim();
+      const btn = document.getElementById('signInSubmitBtn');
+
+      if (!phone || !password) {
+        showToast("Please provide both phone number and password.", "error");
+        return;
+      }
+
+      btn.classList.add('loading');
+
+      setTimeout(() => {
+        btn.classList.remove('loading');
+        state.currentUser = `${state.selectedCountry.code} ${phone}`;
+        showToast(`Welcome back, ${state.currentUser}!`, "success");
+        enterDashboard();
+      }, 700);
+    }
+
+    function handleRegisterSubmit(e) {
+      e.preventDefault();
+      const phone = document.getElementById('regPhone').value.trim();
+      const password = document.getElementById('regPassword').value;
+      const confirm = document.getElementById('regConfirmPassword').value;
+      const btn = document.getElementById('registerSubmitBtn');
+
+      if (password.length < 6) {
+        showToast("Password must be at least 6 characters long.", "error");
+        return;
+      }
+
+      if (password !== confirm) {
+        showToast("Passwords do not match! Please re-verify.", "error");
+        return;
+      }
+
+      btn.classList.add('loading');
+
+      setTimeout(() => {
+        btn.classList.remove('loading');
+        state.currentUser = `${state.selectedCountry.code} ${phone}`;
+        showToast("Account registered successfully! Welcome bonus applied.", "success");
+        enterDashboard();
+      }, 800);
+    }
+
+    function sendDummyOtp() {
+      const phone = document.getElementById('forgotPhone').value.trim();
+      if (!phone) {
+        showToast("Please enter your phone number first.", "error");
+        return;
+      }
+
+      const btn = document.getElementById('sendOtpBtn');
+      btn.disabled = true;
+      let countdown = 60;
+      btn.textContent = `${countdown}s`;
+
+      const timer = setInterval(() => {
+        countdown--;
+        btn.textContent = `${countdown}s`;
+        if (countdown <= 0) {
+          clearInterval(timer);
+          btn.disabled = false;
+          btn.textContent = "Send OTP";
+        }
+      }, 1000);
+
+      const demoCode = "584920";
+      setTimeout(() => {
+        showToast(`[SMS Gateway Simulated] Your Rare.0g verification code is: ${demoCode}`, "success");
+        document.getElementById('forgotOtp').value = demoCode;
+      }, 800);
+    }
+
+    function handleForgotSubmit(e) {
+      e.preventDefault();
+      const newPass = document.getElementById('forgotNewPassword').value;
+      if (newPass.length < 6) {
+        showToast("New password must be at least 6 characters.", "error");
+        return;
+      }
+
+      showToast("Password successfully reset! You may now sign in.", "success");
+      closeForgotModal();
+      switchAuthTab('signin');
+      document.getElementById('signInPassword').value = newPass;
+    }
+
+    // Dashboard View Transitions
+    function enterDashboard() {
+      document.getElementById('authCard').style.display = 'none';
+      const dash = document.getElementById('dashboardView');
+      dash.style.display = 'block';
+
+      if (state.currentUser) {
+        document.getElementById('dashUserPhone').textContent = state.currentUser;
+        document.getElementById('dashAvatar').textContent = state.currentUser.slice(-2);
+      }
+
+      document.title = "Dashboard — Rare.0g Demo Website";
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showAuthView() {
+      document.getElementById('dashboardView').style.display = 'none';
+      document.getElementById('authCard').style.display = 'block';
+      document.title = "Sign in — Rare.0g Demo Website";
+    }
+
+    function handleLogout() {
+      showToast("Logged out safely from Rare.0g Demo.", "info");
+      showAuthView();
+    }
+
+    function claimTask(btn, reward) {
+      if (btn.classList.contains('claimed')) return;
+      btn.classList.add('claimed');
+      btn.textContent = "Claimed ✓";
+      state.balance += reward;
+      document.getElementById('dashBalanceAmount').textContent = `PKR ${state.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+      showToast(`Success! +PKR ${reward} added to balance.`, "success");
+    }
+
+    function copyReferralLink() {
+      const link = document.getElementById('refLinkText').textContent.trim();
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(link);
+      }
+      showToast("Referral link copied to clipboard: " + link, "success");
+    }
+
+    // Toast Functionality
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast-item ${type}`;
+
+      let icon = 'ℹ️';
+      if (type === 'success') icon = '✅';
+      if (type === 'error') icon = '⚠️';
+
+      toast.innerHTML = `
+        <span style="font-size:1.1rem;">${icon}</span>
+        <span style="flex:1;">${message}</span>
+      `;
+
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.add('hide');
+        setTimeout(() => toast.remove(), 250);
+      }, 3500);
+    }
+
+    // On Load
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCountryList();
+    });
+  </script>
+</body>
+</html>
